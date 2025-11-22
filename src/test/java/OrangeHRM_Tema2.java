@@ -2,80 +2,69 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
 import java.time.Duration;
 
 public class OrangeHRM_Tema2 {
 
-    public static void main(String[] args) throws InterruptedException {
-        // Date de Test
-        String user = "Admin";
-        String pass = "admin123";
-        String numeAngajat = "Odis Adalwin"; // Nume existent pe demo
-        String stradaNoua = "Bulevardul Test 123";
-        String mobilNou = "0700112233";
+    public static void OrangeHRM {
 
-        // 1. Configurarea si pornirea browserului
+        // 1. Initializarea si navigare
         WebDriver driver = new ChromeDriver();
-        driver.get("https://opensource-demo.orangehrmlive.com/web/index.php/auth/login");
-
         driver.manage().window().maximize();
-        driver.get("https://opensource-demo.orangehrmlive.com/web/index.php/auth/login");
+        driver.get("https://demoqa.com/");
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
 
-        try {
-            // 1. Logare pe site
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("username"))).sendKeys(user);
-            driver.findElement(By.name("password")).sendKeys(pass);
-            driver.findElement(By.xpath("//button[@type='submit']")).click();
 
-            // 2. click PIM
-            By pimLink = By.xpath("//a[contains(@href, '/pim')]");
-            wait.until(ExpectedConditions.elementToBeClickable(pimLink)).click();
+        // Click pe tile-ul Elements
+        WebElement elementsTile = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//h5[text()='Elements']")));
+        elementsTile.click();
 
-            // 3. cauta un nou user dupa nume
-            By numeField = By.xpath("(//input[@placeholder='Type for hints...'])[1]");
-            wait.until(ExpectedConditions.elementToBeClickable(numeField)).sendKeys(numeAngajat);
-            driver.findElement(By.xpath("//button[@type='submit']")).click();
+        // Click pe meniul "Text Box"
+        WebElement textBoxMenu = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[text()='Text Box']")));
+        textBoxMenu.click();
 
-            // Așteaptă rezultatele
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class='oxd-table-body']")));
+        // Completarea formularului Text Box
+        driver.findElement(By.id("userName")).sendKeys("Bianca Nef");
+        driver.findElement(By.id("userEmail")).sendKeys("bianca.nef@test.com");
+        driver.findElement(By.id("currentAddress")).sendKeys("Strada Testului, Nr. 1");
+        driver.findElement(By.id("permanentAddress")).sendKeys("Bulevardul Selenium, Bl. 10");
 
-            //4. acceseaza pagina userului cautat (click pe iconița de Edit) ---
-            By editBtn = By.xpath("(//div[@class='oxd-table-row'])[1]//button[contains(@class, 'edit')]");
-            wait.until(ExpectedConditions.elementToBeClickable(editBtn)).click();
+        // Click pe Submit
+        WebElement submitButton = driver.findElement(By.id("submit"));
+        submitButton.click();
 
-            // 5. merge in contact details ---
-            By contactLink = By.xpath("//a[text()='Contact Details']");
-            wait.until(ExpectedConditions.elementToBeClickable(contactLink)).click();
+        // Verificare: Se afișează datele introduse
+        WebElement outputName = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("output")));
+        Assert.assertTrue(outputName.getText().contains("Bianca Nef"));
 
-            // 6. adauga Datele de contact sau le updateaza ---
-            By stradaField = By.xpath("(//input[@class='oxd-input oxd-input--active'])[1]");
-            By mobilField = By.xpath("(//input[@class='oxd-input oxd-input--active'])[7]");
 
-            // Curăță câmpurile și introduce datele noi
-            wait.until(ExpectedConditions.visibilityOfElementLocated(stradaField)).clear();
-            driver.findElement(stradaField).sendKeys(stradaNoua);
+        // Click pe meniul "Check Box"
+        WebElement checkBoxMenu = driver.findElement(By.xpath("//span[text()='Check Box']"));
+        checkBoxMenu.click();
 
-            driver.findElement(mobilField).clear();
-            driver.findElement(mobilField).sendKeys(mobilNou);
+        // Click pe butonul >
+        WebElement expandButton = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".rct-icon-expand-all")));
+        expandButton.click();
 
-            // 7. Save
-            By saveBtn = By.xpath("(//button[@type='submit'])[1]");
-            driver.findElement(saveBtn).click();
+        // Click pe casetele Desktop si Downloads
+        WebElement desktopLabel = driver.findElement(By.xpath("//label[contains(., 'Desktop')]"));
+        desktopLabel.click();
 
-            // Verificare succes
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(@class, 'oxd-toast--success')]")));
-            System.out.println("Succes! Datele de contact au fost actualizate.");
+        WebElement downloadsLabel = driver.findElement(By.xpath("//label[contains(., 'Downloads')]"));
+        downloadsLabel.click();
 
-        } catch (Exception e) {
-            System.err.println("Testul a eșuat: " + e.getMessage());
-        } finally {
-            // Curățenie
-            Thread.sleep(3000); // Pauză pentru a vedea rezultatul
-            driver.quit();
-        }
+
+        // Click pe meniul Radio Button
+        WebElement radioButtonMenu = driver.findElement(By.xpath("//span[text()='Radio Button']"));
+        radioButtonMenu.click();
+
+        // Selectare Impressive
+        WebElement impressiveRadio = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//label[text()='Impressive']")));
+        impressiveRadio.click();
+
+        driver.close();
     }
 }
-
